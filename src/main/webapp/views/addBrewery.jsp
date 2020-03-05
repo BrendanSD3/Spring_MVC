@@ -7,7 +7,7 @@
     </head>
   
         <h3>Enter The Brewery Details!</h3>
-        
+        <!---HERE is a test  comment for commit ---->
         <form:form method="POST" action="/TasteMVC/taste/addBrewery" modelAttribute="brew">
      
             <table>
