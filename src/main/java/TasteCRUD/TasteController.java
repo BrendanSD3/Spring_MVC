@@ -5,7 +5,15 @@
  */
 package TasteCRUD;
 import Model.Breweries;
+import Model.BreweriesGeocode;
+import static com.sun.org.apache.xalan.internal.lib.ExsltDatetime.dateTime;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,6 +34,13 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
 import java.util.List;
+import java.util.ListIterator;
+import javax.mail.Session;
+import org.springframework.http.HttpStatus;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
  *
@@ -39,7 +54,7 @@ public class TasteController {
 
     @Autowired
     TasteService service;
-        
+       
     //@GetMapping("/view")
     @RequestMapping("/view")
     public ModelAndView getall(){
@@ -62,16 +77,72 @@ public class TasteController {
     }
     //@RequestMapping(value = "/addAgent", method = RequestMethod.POST)
     @PostMapping("/addBrewery")
-    public ModelAndView addBrew(@Valid @ModelAttribute("brew")Breweries brew, 
-      BindingResult result, ModelMap model) {
-        if (result.hasErrors()) {
+    public ModelAndView addBrew(@Valid @ModelAttribute("brew")Breweries brew,
+      BindingResult result, ModelMap model, RedirectAttributes attr) {
+         if (result.hasErrors()) {
+             
             System.out.println("results"+ result);
-             return new ModelAndView("/error");
+             return new ModelAndView("/addBrewery","brew",brew);
         }
+        Integer maxbreweryid=service.getmaxBreweryID()+1;
+        System.out.println("Breweryid"+maxbreweryid);
+        brew.setBrewery_id(maxbreweryid);
         
-        service.addBrewery(brew);
+        //BreweriesGeocode geobrew=new BreweriesGeocode(0,maxbreweryid,lat, lon);
+        int success = service.addBrewery(brew);
+        System.out.println("success?"+success);
+        String Message="";
+        if(success==1)
+        {
+         Message= "Record inserted successfully";
+        }
+        else
+        {
+          Message="there was an error";
+        return new ModelAndView("redirect:/taste/addBrewery");
+        }
+       attr.addAttribute("Message", Message);
+        //service.addBreweryGeo(geobrew);
         //route the user to the next page
+        return new ModelAndView("redirect:/taste/Success");
+    }            
+    
+    @GetMapping("/Success")
+    @ResponseBody
+    public String successpage(@QueryParam("Message") String Message)
+    {
+    return Message+ "<br>"+ " <a href='/TasteMVC/taste/view'>Return to Home page</a>  ";
+    
+    
+    }        
+    
+    @RequestMapping("/editbrew")
+    public ModelAndView editBreweryForm(@QueryParam("id") int id){
+        Breweries br=service.getbrewByID(id);
+        System.out.println("brewery"+ br.getbrewid());
+        return new ModelAndView("/edit", "brew",br);
+    }
+    
+    @PostMapping("/edit")
+    public ModelAndView editbrew(@Valid @ModelAttribute("brew") Breweries brew, BindingResult result, ModelMap model) {
+        if (result.hasErrors()) {
+            System.out.println("REsult"+result);
+            return new ModelAndView("/edit","brew",brew);
+        }
+        System.out.println("Brewid"+brew.getbrewid());
+        
+        service.editBrewery(brew);
         return new ModelAndView("redirect:/taste/view");
-    }                      
+    }
+    @GetMapping("/delete")
+    public ModelAndView deleteBrewery(@QueryParam("id") int id, RedirectAttributes attr){
+        Breweries b = service.getbrewByID(id);
+        service.deleteBrew(b);
+        
+        attr.addAttribute("Message","user removed");
+        return new ModelAndView("redirect:/taste/view");
+        //return new ModelAndView("/allAgents", "agentlist", service.getAllAgents());
+    }
+  
     
 }

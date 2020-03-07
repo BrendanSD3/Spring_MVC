@@ -16,12 +16,19 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
+import javax.persistence.SecondaryTable;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.URL;
 
 /**
  *
@@ -29,10 +36,12 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @Entity
 @Table(name = "breweries")
+@SecondaryTable(name="breweries_geocode")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Breweries.findAll", query = "SELECT b FROM Breweries b"),
-    @NamedQuery(name = "Breweries.findById", query = "SELECT b FROM Breweries b WHERE b.id = :id"),
+    @NamedQuery(name = "Breweries.findById", query = "SELECT b FROM Breweries b WHERE b.brewid = :id"),
+    @NamedQuery(name = "Breweries.findMaxId", query = "SELECT MAX(b.brewid) as maxid FROM Breweries b"),
     @NamedQuery(name = "Breweries.findByName", query = "SELECT b FROM Breweries b WHERE b.name = :name"),
     @NamedQuery(name = "Breweries.findByAddress1", query = "SELECT b FROM Breweries b WHERE b.address1 = :address1"),
     @NamedQuery(name = "Breweries.findByAddress2", query = "SELECT b FROM Breweries b WHERE b.address2 = :address2"),
@@ -52,95 +61,142 @@ public class Breweries implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+   
+    @Column(name = "id", updatable = false, nullable = false)
+    private Integer brewid;
+    
     @Basic(optional = false)
-    @Column(name = "id")
-    private Integer id;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 255)
+    @NotNull (message="Must not be null")
+    @Size(min = 1, max = 50, message="Enter at least 1 letter for name")
     @Column(name = "name")
     private String name;
+    
     @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 255)
+    @NotNull (message="Must not be null")
+    @Size(min = 1, max = 50, message="Enter at least 1 letter for Address max is 50")
     @Column(name = "address1")
     private String address1;
+    
     @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 255)
+    @NotNull (message="Must not be null")
+    @Size(min = 1, max = 50, message="Enter at least 1 letter for Address max is 50")
     @Column(name = "address2")
     private String address2;
+    
     @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 255)
+    @NotNull (message="Must not be null")
+    @Size(min = 1, max = 30, message="Enter at least 1 letter max is 30")
     @Column(name = "city")
     private String city;
+    
     @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 255)
+    @NotNull (message="Must not be null")
+    @Size(min = 1, max = 20, message="Enter a state name between 1 and 20 characters allowed")
     @Column(name = "state")
     private String state;
+    
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 25)
+    @Size(min = 1, max = 5)
     @Column(name = "code")
     private String code;
+    
     @Basic(optional = false)
-    @NotNull
+    @NotNull (message="Must not be null")
     @Size(min = 1, max = 255)
     @Column(name = "country")
     private String country;
-    // @Pattern(regexp="^\\(?(\\d{3})\\)?[- ]?(\\d{3})[- ]?(\\d{4})$", message="Invalid phone/fax format, should be as xxx-xxx-xxxx")//if the field contains phone or fax number consider using this annotation to enforce field validation
+    
+    @Pattern(regexp="^\\(?(\\d{3})\\)?[- ]?(\\d{3})[- ]?(\\d{4})$", message="Invalid phone/fax format, should be as xxx-xxx-xxxx")//if the field contains phone or fax number consider using this annotation to enforce field validation
     @Basic(optional = false)
-    @NotNull
+    @NotNull (message="Must not be null")
     @Size(min = 1, max = 50)
     @Column(name = "phone")
     private String phone;
+    
     @Basic(optional = false)
-    @NotNull
+    @NotNull (message="Must not be null")
     @Size(min = 1, max = 255)
+    @URL (message="Please enter valid URL starting with http://")
     @Column(name = "website")
     private String website;
+    
     @Basic(optional = false)
-    @NotNull
+    @NotNull (message="Must not be null")
     @Size(min = 1, max = 255)
     @Column(name = "image")
     private String image;
+    
     @Basic(optional = false)
-    @NotNull
+    @NotNull (message="Must not be null")
     @Lob
     @Size(min = 1, max = 65535)
     @Column(name = "description")
     private String description;
+    
     @Basic(optional = false)
-    @NotNull
+    @NotNull (message="Must not be null")
     @Column(name = "add_user")
+    //@Size(min=0, max=2, message="must be 2 or less digits and not negative")
     private int addUser;
+    
     @Basic(optional = false)
-    @NotNull
+    @NotNull (message="Must not be null")
     @Column(name = "last_mod")
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastMod;
+    
     @Basic(optional = false)
-    @NotNull
+    @NotNull (message="Must not be null")
     @Column(name = "credit_limit")
+    //@Pattern(regexp="^\\d{0,6}(\\.\\d{1,2})?$", message="should be up to 6 digits and 2 after decimal point ")
+    //@Size(max = 999999, min =0,message="credit limit is  0 to 6 digits")
     private double creditLimit;
-    // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
+    
+    @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
     @Basic(optional = false)
-    @NotNull
+    @NotNull (message="Must not be null")
     @Size(min = 1, max = 50)
     @Column(name = "email")
     private String email;
+    
+    //GeoCode
+  
 
+    @Column(table="breweries_geocode")
+    private int geoid;
+    
+    @Column(table="breweries_geocode")
+    private int brewery_id;
+    
+    @Column(table="breweries_geocode")
+    @NotNull(message="enter number between -90 and 90")
+    
+    @Max(90)
+    @Min(-90)
+    private float latitude;
+    
+    @Column(table="breweries_geocode")
+    @NotNull //(message="enter number between -180 and 180")
+    @Max(180) 
+    @Min(-180)
+    private float longitude;
+
+
+    
+    
+    
+    
+    
     public Breweries() {
     }
 
-    public Breweries(Integer id) {
-        this.id = id;
+    public Breweries(Integer brewid) {
+        this.brewid = brewid;
     }
 
-    public Breweries(Integer id, String name, String address1, String address2, String city, String state, String code, String country, String phone, String website, String image, String description, int addUser, Date lastMod, double creditLimit, String email) {
-        this.id = id;
+    public Breweries(Integer brewid, String name, String address1, String address2, String city, String state, String code, String country, String phone, String website, String image, String description, int addUser, Date lastMod, double creditLimit, String email) {
+        this.brewid = brewid;
         this.name = name;
         this.address1 = address1;
         this.address2 = address2;
@@ -158,12 +214,51 @@ public class Breweries implements Serializable {
         this.email = email;
     }
 
-    public Integer getId() {
-        return id;
+    public Breweries(int geoid,int brewery_id, float latitude, float longitude) {
+       this.geoid=geoid;
+        this.brewery_id = brewery_id;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
+    public int getgeoid()
+    {
+    return geoid;
+    }        
+//
+//    public void setGeoid(int geoid) {
+//        this.geoid = geoid;
+//    }
+    
+    public int getBrewery_id() {
+        return brewery_id;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public float getLatitude() {
+        return latitude;
+    }
+
+    public float getLongitude() {
+        return longitude;
+    }
+
+    public void setBrewery_id(int brewery_id) {
+        this.brewery_id = brewery_id;
+    }
+
+    public void setLatitude(float latitude) {
+        this.latitude = latitude;
+    }
+
+    public void setLongitude(float longitude) {
+        this.longitude = longitude;
+    }
+    
+    public Integer getbrewid() {
+        return brewid;
+    }
+
+    public void setbrewid(Integer brewid) {
+        this.brewid = brewid;
     }
 
     public String getName() {
@@ -289,7 +384,7 @@ public class Breweries implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+        hash += (brewid != null ? brewid.hashCode() : 0);
         return hash;
     }
 
@@ -300,15 +395,22 @@ public class Breweries implements Serializable {
             return false;
         }
         Breweries other = (Breweries) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+        if ((this.brewid == null && other.brewid != null) || (this.brewid != null && !this.brewid.equals(other.brewid))) {
             return false;
         }
         return true;
     }
 
+    
+    
+    
+    
+    
+    
+    
     @Override
     public String toString() {
-        return "Model.Breweries[ id=" + id + " ]";
+        return "Model.Breweries[ id=" + brewid + " ]";
     }
     
 }

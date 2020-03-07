@@ -12,10 +12,21 @@
 Current date Time is: <fmt:formatDate value="${date}" pattern="yyyy-MM-dd HH:mm:ss" />
         <h3>Enter The Brewery Details!</h3>
         <!---HERE is a test  comment for commit ---->
-        <form:form method="POST" action="/TasteMVC/taste/addBrewery" modelAttribute="brew" >
+        <form:form method="POST" action="/TasteMVC/taste/edit" modelAttribute="brew" >
      
             <table>
-                
+                <span style="color:red;">
+                    <form:errors path="*"/>
+                </span>
+                                            
+                <tr>
+                <td><form:label path="brewid">ID</form:label></td>
+                <td><form:input path="brewid" readonly="true"/></td>
+                </tr>            
+                <tr>
+                <td><form:label path="brewery_id">Brewery ID</form:label></td>
+                <td><form:input path="brewery_id" readonly="true"/></td>
+                </tr>          
                 <tr>
                     <td><form:label path="name">Name</form:label></td>
                     <td><form:input path="name"/></td>
@@ -79,9 +90,7 @@ Current date Time is: <fmt:formatDate value="${date}" pattern="yyyy-MM-dd HH:mm:
                <form:input type="hidden" path="lastMod" value="${date}" />
                 <form:input type="hidden" path="image" value="no_image"/>
                 
-                <form:input type="hidden" path="brewery_id"  />
-                <form:input type="hidden" path="brewid"  />
-                <%---<form:input type="hidden" path="geoid" value="1" />---%>
+               
                 <tr>
                     <td><form:label path="latitude">Latitude</form:label></td>
                     <td><form:input path="latitude"/></td>
@@ -94,7 +103,7 @@ Current date Time is: <fmt:formatDate value="${date}" pattern="yyyy-MM-dd HH:mm:
                 </tr>
                 
                 <tr>
-                    <td><input type="submit" value="Submit!" onclick="success()"/></td>
+                    <td><input type="submit" value="Submit!" /></td>
                 </tr>
             </table>
         </form:form>

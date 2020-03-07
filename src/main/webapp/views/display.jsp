@@ -20,15 +20,20 @@
              <th align="left">Country</th>
              <th align="left">Phone</th>
              <th align="left">Email</th>
-             <th align="left">Actions</th>
-            </tr>
+             <th align="left">Latitude</th>
+             <th align="left">Longitude</th>
+             <th align="left">Last Modified</th>
+                        </tr>
             
                 <tr>
-                    <td>${brew.id}</td>
+                    <td>${brew.brewid} </td>
                     <td>${brew.name}</td>
                     <td>${brew.country}</td>
                     <td>${brew.phone}</td>
                     <td>${brew.email}</td>
+                    <td>${brew.latitude}</td>
+                    <td>${brew.longitude}</td>
+                    <td>${brew.lastMod}</td>
                     <%---<td>  <a href="\AgentsCRUD\agent\edit?id=${foundagent.agentId}">edit</a></td>---%>
                    
                 </tr>

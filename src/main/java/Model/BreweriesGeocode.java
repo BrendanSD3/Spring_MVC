@@ -7,13 +7,16 @@ package Model;
 
 import java.io.Serializable;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -27,7 +30,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "BreweriesGeocode.findAll", query = "SELECT b FROM BreweriesGeocode b"),
-    @NamedQuery(name = "BreweriesGeocode.findById", query = "SELECT b FROM BreweriesGeocode b WHERE b.id = :id"),
+    @NamedQuery(name = "BreweriesGeocode.findById", query = "SELECT b FROM BreweriesGeocode b WHERE b.geoid = :id"),
+    @NamedQuery(name = "BreweriesGeocode.findMaxId", query = "SELECT MAX(b.geoid) as maxid FROM BreweriesGeocode b"),
     @NamedQuery(name = "BreweriesGeocode.findByBreweryId", query = "SELECT b FROM BreweriesGeocode b WHERE b.breweryId = :breweryId"),
     @NamedQuery(name = "BreweriesGeocode.findByLatitude", query = "SELECT b FROM BreweriesGeocode b WHERE b.latitude = :latitude"),
     @NamedQuery(name = "BreweriesGeocode.findByLongitude", query = "SELECT b FROM BreweriesGeocode b WHERE b.longitude = :longitude")})
@@ -36,9 +40,9 @@ public class BreweriesGeocode implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "id")
-    private Integer id;
+    
+    @Column(name = "id", updatable = false, nullable = false)
+    private Integer geoid;
     @Basic(optional = false)
     @NotNull
     @Column(name = "brewery_id")
@@ -51,27 +55,28 @@ public class BreweriesGeocode implements Serializable {
     @NotNull
     @Column(name = "longitude")
     private float longitude;
-
+    
+    
     public BreweriesGeocode() {
     }
 
-    public BreweriesGeocode(Integer id) {
-        this.id = id;
+    public BreweriesGeocode(Integer geoid) {
+        this.geoid = geoid;
     }
 
-    public BreweriesGeocode(Integer id, int breweryId, float latitude, float longitude) {
-        this.id = id;
+    public BreweriesGeocode(Integer geoid, int breweryId, float latitude, float longitude) {
+        this.geoid = geoid;
         this.breweryId = breweryId;
         this.latitude = latitude;
         this.longitude = longitude;
     }
 
-    public Integer getId() {
-        return id;
+    public Integer getgeoid() {
+        return geoid;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setgeoid(Integer geoid) {
+        this.geoid = geoid;
     }
 
     public int getBreweryId() {
@@ -101,7 +106,7 @@ public class BreweriesGeocode implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+        hash += (geoid != null ? geoid.hashCode() : 0);
         return hash;
     }
 
@@ -112,7 +117,7 @@ public class BreweriesGeocode implements Serializable {
             return false;
         }
         BreweriesGeocode other = (BreweriesGeocode) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+        if ((this.geoid == null && other.geoid != null) || (this.geoid != null && !this.geoid.equals(other.geoid))) {
             return false;
         }
         return true;
@@ -120,7 +125,7 @@ public class BreweriesGeocode implements Serializable {
 
     @Override
     public String toString() {
-        return "Model.BreweriesGeocode[ id=" + id + " ]";
+        return "Model.BreweriesGeocode[ id=" + geoid + " ]";
     }
     
 }

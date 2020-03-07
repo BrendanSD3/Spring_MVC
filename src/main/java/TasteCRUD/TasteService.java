@@ -6,10 +6,11 @@
 package TasteCRUD;
 
 import Model.Breweries;
+import Model.BreweriesGeocode;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
-import Model.dbutil;
+import Model.DBUtil;
 import javax.persistence.EntityTransaction;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +21,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class TasteService {
        public List<Breweries> getAllBreweries() {
-           EntityManager em = dbutil.getEMF().createEntityManager();
+           EntityManager em = DBUtil.getEMF().createEntityManager();
         String query="SELECT b FROM Breweries b";
         TypedQuery<Breweries> tq = em.createQuery(query, Breweries.class);
 //        
@@ -43,13 +44,60 @@ public class TasteService {
         return list;       
 
     }//end 
-    public void addBrewery(Breweries b)
+         public int getmaxBreweryGeoID()
+       {
+             EntityManager em = DBUtil.getEMF().createEntityManager();
+        Integer maxId = (Integer) em.createNamedQuery("BreweriesGeocode.findMaxId").getSingleResult();
+       
+       
+           System.out.println("maxgeoid"+maxId);
+       return maxId;
+       
+       }
+       public int getmaxBreweryID()
+       {
+             EntityManager em = DBUtil.getEMF().createEntityManager();
+        Integer maxId = (Integer) em.createNamedQuery("Breweries.findMaxId").getSingleResult();
+       
+       
+           System.out.println("maxid"+maxId);
+       return maxId;
+       
+       }
+    public int addBrewery(Breweries b)
       {
-          EntityManager em =dbutil.getEMF().createEntityManager();
+          System.out.println("Brewery obj"+b);
+          System.out.println("Breweryid"+b.getBrewery_id()+" gid"+b.getgeoid());
+          Integer geoid=getmaxBreweryGeoID()+1;
+          
+          EntityManager em =DBUtil.getEMF().createEntityManager();
           EntityTransaction trans=em.getTransaction();
           try{
               trans.begin();
               em.persist(b);
+              trans.commit();
+          }
+      catch(Exception ex){
+          System.out.println("ex"+ ex);
+          return 0;//failed
+      }
+          finally{
+              em.close();
+          }
+          return 1; // succeeded
+
+      }
+       
+    public void addBreweryGeo(BreweriesGeocode g)
+      {
+          
+          System.out.println("Geocode obj"+ g);
+         //BreweriesGeocode gobj= new BreweriesGeocode(g.getId(), g.getBreweryId(), g.getLatitude(), g.getLongitude());
+          EntityManager em =DBUtil.getEMF().createEntityManager();
+          EntityTransaction trans=em.getTransaction();
+          try{
+              trans.begin();
+              em.persist(g);
               trans.commit();
           }
       catch(Exception ex){
@@ -60,8 +108,9 @@ public class TasteService {
               em.close();
           }
       }
+    
     public Breweries getbrewByID(int brewid) {
-        EntityManager em = dbutil.getEMF().createEntityManager();
+        EntityManager em = DBUtil.getEMF().createEntityManager();
 
         Breweries brew = null;
         try {
@@ -77,4 +126,40 @@ public class TasteService {
 
         return brew;
     }
+
+    public void editBrewery(Breweries brew) {
+            
+         //BreweriesGeocode gobj= new BreweriesGeocode(g.getId(), g.getBreweryId(), g.getLatitude(), g.getLongitude());
+          EntityManager em =DBUtil.getEMF().createEntityManager();
+          EntityTransaction trans=em.getTransaction();
+          try{
+              trans.begin();
+              em.merge(brew);
+              trans.commit();
+          }
+      catch(Exception ex){
+          System.out.println("ex"+ ex);
+          
+      }
+          finally{
+              em.close();
+          }
+    }
+     public void deleteBrew(Breweries b)
+      {
+          EntityManager em = DBUtil.getEMF().createEntityManager();
+          EntityTransaction trans= em.getTransaction();
+          try{
+              trans.begin();
+              em.remove(em.merge(b));
+              trans.commit();
+              
+          }
+          catch(Exception e){
+              System.out.println("ex"+ e);
+          }
+          finally {
+              em.close();
+          }
+      }
 }
