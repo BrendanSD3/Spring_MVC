@@ -1,3 +1,4 @@
+
 <%@ taglib uri = "http://java.sun.com/jsp/jstl/core" prefix = "c" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -38,7 +39,7 @@
          }
         </script></head>
         <center><h1>List of Breweries</h1>
-            <h3>Message ${message}</h3>
+            <h3><a href="\TasteMVC\taste\add">Insert a new Record</a></h3>
 
         <table class="display compact hover stripe" id="tableP">
             <thead>
@@ -63,20 +64,21 @@
                         <td>${brewery.state}</td>
                         <td>${brewery.country}</td>
                         <td>${brewery.website}</td>
-                        <td>${brewery.image}</td>
+                        <td><img src="/TasteMVC/images/${brewery.image}" style="height:50px; width: 50px;" alt="${brewery.image}"></img></td>
                         <td>${brewery.email}</td>
                         <td>
-                            <a href="\TasteMVC\taste\editbrew?id=${brewery.brewid}">Edit</a>
-                           <a href="\TasteMVC\taste\display?id=${brewery.brewid}">Display</a>
-                           <a href="\TasteMVC\taste\delete?id=${brewery.brewid}" onclick="Areyousure()">Delete</a>
-                        <a href="\TasteMVC\taste\add">Insert</a>
+                            <button> <a href="\TasteMVC\taste\editbrew?id=${brewery.brewid}">Edit</a></button>
+                            <button><a href="\TasteMVC\taste\display?id=${brewery.brewid}">Display</a></button>
+                            <button><a href="\TasteMVC\taste\delete?id=${brewery.brewid}" onclick="Areyousure()">Delete</a></button>
+                        
                         </td>
                     </tr>
                 </c:forEach>
             </tbody>
         </table></center>
     </body>
-<%------
+<%--------
+
 <%@ taglib uri = "http://java.sun.com/jsp/jstl/core" prefix = "c" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -94,21 +96,22 @@
              <th align="left">Address</th>
              <th align="left">Phone</th>
              <th align="left">Email</th>
+             <th align="left">image</th>
              <th align="left">Actions</th>
             </tr>
             <c:forEach items="${List}" var="brewery"> 
                 <tr>
-                    <td>${brewery.id}</td>
+                    <td>${brewery.brewid}</td>
                     <td>${brewery.name}</td>
                     <td>${brewery.address1}</td>
                     <td>${brewery.phone}</td>
                     <td>${brewery.email}</td>
-                    
+                    <td><img src="/TasteMVC/images/${brewery.image}" style="height:50px; width: 50px;" alt="${brewery.image}"></img></td>
                     <td>
-                        <a href="\delete?id=${}">Delete</a>
-                        <a href="\TasteMVC\taste\display?id=${brewery.id}">Display</a>
+                        <a href="\TasteMVC\taste\editbrew?id=${brewery.brewid}">Edit</a>
+                           <a href="\TasteMVC\taste\display?id=${brewery.brewid}">Display</a>
+                           <a href="\TasteMVC\taste\delete?id=${brewery.brewid}" onclick="Areyousure()">Delete</a>
                         <a href="\TasteMVC\taste\add">Insert</a>
-                        
                     </td>
                    
                 </tr>
@@ -116,4 +119,4 @@
         </table>
     </body>
 </html>
----------%>
+------%>

@@ -66,8 +66,8 @@ public class TasteService {
        }
     public int addBrewery(Breweries b)
       {
-          System.out.println("Brewery obj"+b);
-          System.out.println("Breweryid"+b.getBrewery_id()+" gid"+b.getgeoid());
+          System.out.println("Brewery obj"+b.getbrewid()+" "+b.getBrewery_id()+" ");
+          //System.out.println("Breweryid"+b.getBrewery_id()+" gid"+b.getgeoid());
           Integer geoid=getmaxBreweryGeoID()+1;
           
           EntityManager em =DBUtil.getEMF().createEntityManager();

@@ -86,6 +86,7 @@ public class TasteController {
         }
         Integer maxbreweryid=service.getmaxBreweryID()+1;
         System.out.println("Breweryid"+maxbreweryid);
+        brew.setbrewid(maxbreweryid);
         brew.setBrewery_id(maxbreweryid);
         
         //BreweriesGeocode geobrew=new BreweriesGeocode(0,maxbreweryid,lat, lon);

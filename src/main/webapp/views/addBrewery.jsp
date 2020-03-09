@@ -77,7 +77,7 @@ Current date Time is: <fmt:formatDate value="${date}" pattern="yyyy-MM-dd HH:mm:
                     <td style="color:red;"> <form:errors path="email"/></td>
                 </tr>
                <form:input type="hidden" path="lastMod" value="${date}" />
-                <form:input type="hidden" path="image" value="no_image"/>
+                <form:input type="hidden" path="image" value="no_image.jpg"/>
                 
                 <form:input type="hidden" path="brewery_id"  />
                 <form:input type="hidden" path="brewid"  />

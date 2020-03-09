@@ -21,6 +21,8 @@ import javax.persistence.SecondaryTable;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.DecimalMax;
+import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -149,8 +151,8 @@ public class Breweries implements Serializable {
     @Basic(optional = false)
     @NotNull (message="Must not be null")
     @Column(name = "credit_limit")
-    //@Pattern(regexp="^\\d{0,6}(\\.\\d{1,2})?$", message="should be up to 6 digits and 2 after decimal point ")
-    //@Size(max = 999999, min =0,message="credit limit is  0 to 6 digits")
+    @DecimalMin("0.00") 
+    @DecimalMax("999999.99") 
     private double creditLimit;
     
     @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
@@ -163,9 +165,9 @@ public class Breweries implements Serializable {
     //GeoCode
   
 
-    @Column(table="breweries_geocode")
-    private int geoid;
-    
+//    @Column(table="breweries_geocode")
+//    private Integer geoid;
+//    
     @Column(table="breweries_geocode")
     private int brewery_id;
     
@@ -214,16 +216,16 @@ public class Breweries implements Serializable {
         this.email = email;
     }
 
-    public Breweries(int geoid,int brewery_id, float latitude, float longitude) {
-       this.geoid=geoid;
+    public Breweries(int brewery_id, float latitude, float longitude) {
+       //this.geoid=geoid;
         this.brewery_id = brewery_id;
         this.latitude = latitude;
         this.longitude = longitude;
     }
-    public int getgeoid()
-    {
-    return geoid;
-    }        
+//    public int getgeoid()
+//    {
+//    return geoid;
+//    }        
 //
 //    public void setGeoid(int geoid) {
 //        this.geoid = geoid;

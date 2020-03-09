@@ -42,7 +42,7 @@
             <property name="paramName" value="language" />
         </bean>
     </mvc:interceptors>
-    
+    <mvc:resources mapping="/images/**" location="/images/"></mvc:resources>
    
 </beans>
 

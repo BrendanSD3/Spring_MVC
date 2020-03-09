@@ -8,6 +8,8 @@
         <title>JSP Page</title>
     </head>
     <body>
-        <h1>ERROR</h1>
+        <h1>An error has occurred </h1>
+        <p>Error Info: <br> ${message}</p>
+        <h3><a href="\TasteMVC\taste\view">Return to Home page</a></h3> 
     </body>
 </html>
