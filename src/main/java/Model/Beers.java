@@ -13,9 +13,15 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.SecondaryTable;
+import javax.persistence.SecondaryTables;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -29,6 +35,11 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @Entity
 @Table(name = "beers")
+@SecondaryTable(name="Styles")
+//@SecondaryTable({
+//                @SecondaryTable(name="Styles"),
+//                @SecondaryTable(name="Categories")
+//})
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Beers.findAll", query = "SELECT b FROM Beers b"),
@@ -110,10 +121,29 @@ public class Beers implements Serializable {
     @NotNull
     @Column(name = "sell_price")
     private double sellPrice;
-
+    
+//    @ManyToOne
+//    @Column(table="Styles")
+//    private int styleid;
+////    
+//   //@OneToOne
+//    @Column(table="Categories")
+//    private String catName; 
+//
+//    public String getStyleName() {
+//        return styleName;
+//    }
+//
+//    public String getCatName() {
+//        return catName;
+//    }
+   
+    
     public Beers() {
     }
 
+   
+    
     public Beers(Integer id) {
         this.id = id;
     }

@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package TasteCRUD;
+import Model.Beers;
 import Model.Breweries;
 import Model.BreweriesGeocode;
 import static com.sun.org.apache.xalan.internal.lib.ExsltDatetime.dateTime;
@@ -54,7 +55,23 @@ public class TasteController {
 
     @Autowired
     TasteService service;
-       
+       @RequestMapping("/search")
+    public ModelAndView searchBeer(){
+        //System.out.println("Getting Called");
+        //List <Breweries> b = service.getAllBreweries();
+        //System.out.println("Printingreturnedlist" + b);
+        return new ModelAndView("/BeerSearch", "Beer",new Beers());
+    }
+        @PostMapping("/searchbeer")
+    public ModelAndView searchforBeer(@QueryParam("name")String name){
+        System.out.println("Getting Called"+name);
+        
+        List <Beers> b = service.getbeerbyname(name);
+        
+        
+        //System.out.println("Printingreturnedlist" + b);
+        return new ModelAndView("/ResultPage","result",b);
+    }
     //@GetMapping("/view")
     @RequestMapping("/view")
     public ModelAndView getall(){

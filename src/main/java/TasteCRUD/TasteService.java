@@ -5,6 +5,7 @@
  */
 package TasteCRUD;
 
+import Model.Beers;
 import Model.Breweries;
 import Model.BreweriesGeocode;
 import java.util.List;
@@ -12,6 +13,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import Model.DBUtil;
 import javax.persistence.EntityTransaction;
+import javax.persistence.NamedQuery;
 import org.springframework.stereotype.Service;
 
 /**
@@ -20,6 +22,41 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class TasteService {
+     public List<Beers> getbeerbyname(String name)
+       {
+             EntityManager em = DBUtil.getEMF().createEntityManager();
+            String query="SELECT b FROM Beers b WHERE b.name LIKE :name";
+           TypedQuery<Beers> tq = em.createQuery(query, Beers.class);
+           tq.setParameter("name","%"+name+"%");
+       
+        List<Beers> list=null;
+        
+        try {
+            list = tq.getResultList();
+            System.out.println("list"+ list);
+            if (list == null || list.size() == 0) {
+                return null;
+            }
+        } catch (Exception ex) {
+            System.out.println(ex);
+        } finally {
+            em.close();
+        }
+        //System.out.println("Got the list"+list);
+        return list;    
+        
+       
+           
+       
+       
+       }
+    
+    
+    
+    
+    
+    
+    
        public List<Breweries> getAllBreweries() {
            EntityManager em = DBUtil.getEMF().createEntityManager();
         String query="SELECT b FROM Breweries b";

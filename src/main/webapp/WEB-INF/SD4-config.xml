@@ -41,6 +41,7 @@
                       class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">
             <property name="paramName" value="language" />
         </bean>
+        
     </mvc:interceptors>
     <mvc:resources mapping="/images/**" location="/images/"></mvc:resources>
    

@@ -41,7 +41,7 @@ public class Styles implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id")
+    @Column(name = "styleid")
     private Integer id;
     @Basic(optional = false)
     @NotNull
@@ -57,7 +57,7 @@ public class Styles implements Serializable {
     @Column(name = "last_mod")
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastMod;
-
+    
     public Styles() {
     }
 

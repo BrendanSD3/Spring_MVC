@@ -12,6 +12,8 @@
         <title>JSP Page</title>
     </head>
     <body>
-        <h1>Hello World!!</h1>
+        <h1>Welcome to taste</h1>
+         <h2> <a href="\TasteMVC\taste\view">View All Breweries</a></h2>
+         <h2> <a href="\TasteMVC\taste\search">Search For Beer!</a></h2>
     </body>
 </html>
