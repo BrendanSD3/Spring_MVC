@@ -41,7 +41,7 @@ public class Styles implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "styleid")
+    @Column(name = "id")
     private Integer id;
     @Basic(optional = false)
     @NotNull

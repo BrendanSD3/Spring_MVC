@@ -25,6 +25,8 @@ import javax.persistence.SecondaryTables;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.DecimalMax;
+import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -119,6 +121,9 @@ public class Beers implements Serializable {
     private double buyPrice;
     @Basic(optional = false)
     @NotNull
+     @DecimalMin("0.00")
+     @DecimalMax("99.99")
+    
     @Column(name = "sell_price")
     private double sellPrice;
     
@@ -299,7 +304,7 @@ public class Beers implements Serializable {
 
     @Override
     public String toString() {
-        return "Model.Beers[ id=" + id + " ]";
+        return "Model.Beers[ id=" + id + " name" + name+ "  cat_id"+ catId+"  style_id"+ styleId + " BuyPrice"+ buyPrice+ "  SellPrice"+sellPrice;
     }
     
 }

@@ -7,8 +7,11 @@ package TasteCRUD;
 import Model.Beers;
 import Model.Breweries;
 import Model.BreweriesGeocode;
+import Model.Categories;
+import Model.Styles;
 import static com.sun.org.apache.xalan.internal.lib.ExsltDatetime.dateTime;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -55,6 +58,16 @@ public class TasteController {
 
     @Autowired
     TasteService service;
+    
+    @RequestMapping("")
+    public ModelAndView gotohome(){
+            return new ModelAndView("/Home");
+    }
+    
+    
+    
+    
+    
        @RequestMapping("/search")
     public ModelAndView searchBeer(){
         //System.out.println("Getting Called");
@@ -72,6 +85,104 @@ public class TasteController {
         //System.out.println("Printingreturnedlist" + b);
         return new ModelAndView("/ResultPage","result",b);
     }
+    
+     @RequestMapping("/Drilldown")
+    public ModelAndView beerdrilldown(@QueryParam("id") int id, ModelMap model){
+        Beers beer =service.getbeerByID(id);
+        
+        int categoryid = beer.getCatId();
+        int styleid = beer.getStyleId();
+        String catname="";
+        String stylename="";
+        if(categoryid<0 && styleid<0)
+        {
+        catname="not found";
+        stylename="not found";
+        }
+        else if(categoryid > 0 && styleid < 0)
+        {
+            Categories cat=service.getCatByID(categoryid);
+            catname=cat.getCatName();
+            stylename="not found";
+        }
+        else if(styleid>0 && categoryid<0)
+        {
+        Styles style=service.getStyleByID(styleid);
+         stylename = style.getStyleName();
+         catname="not found";
+        }
+        else
+        {
+        Categories cat=service.getCatByID(categoryid);
+        
+        Styles style=service.getStyleByID(styleid);
+        catname=cat.getCatName();
+        stylename = style.getStyleName();
+        }
+        
+        
+        model.addAttribute("stylename",stylename);
+        model.addAttribute("catname",catname);
+        model.addAttribute(beer);
+         //System.out.println("does model contain beer ?"+ model.toString());
+        return new ModelAndView("/Drilldown",model);
+    }
+    @PostMapping("/changesellprice")
+    @ResponseBody
+    public ModelAndView sellprice(@QueryParam("price")double price,@QueryParam("id") int id)
+    {       
+           Beers beer=service.getbeerByID(id);
+           double currentprice=beer.getSellPrice();
+           
+           
+           double newprice=0.0;
+           //price=price/100;
+           if(price>0)
+           {
+           System.out.println("percent to increase by =  "+price +" Current price= "+ currentprice);
+           newprice=Math.round(price*currentprice);
+           newprice=newprice/100;
+           System.out.println("(price*current)/100= "+newprice);
+           newprice=currentprice+newprice;
+          System.out.println("newprice"+newprice);
+           }
+           else if(price<0)
+          {
+          System.out.println("price is less than zero=  "+price);
+           newprice=Math.round(price*currentprice);
+           newprice=newprice/100.0;
+           System.out.println("(price*current)/100= "+newprice);
+           newprice=currentprice+newprice;
+              System.out.println("newprice"+newprice);
+          }
+           else{
+           
+           
+           }
+           DecimalFormat format= new DecimalFormat("##.00"); 
+           //newprice =currentprice*(1+price);
+           
+           //beer.setSellPrice(newprice);
+           Boolean success=true;
+           success=service.editBeer(beer,newprice);
+           System.out.println("new price="+beer.getSellPrice()+ "success" +success);
+           if(success == false)
+           {
+               return new ModelAndView("/Error");
+           }
+           else{
+           System.out.println("check"+format.format(newprice));
+           //return "it worked Changed the sell price from "+currentprice + " To "+ format.format(newprice) + "Return <a href='/TasteMVC/'>Back to home</a> "  ;
+           return new ModelAndView("redirect:/taste");
+           }
+    }
+//     public ModelAndView increaseprice(@QueryParam("id") int id){
+//     Beers b =service.getbeerByID(id);
+//     double buyprice=b.getBuyPrice();
+//     
+//     
+//     }
+   
     //@GetMapping("/view")
     @RequestMapping("/view")
     public ModelAndView getall(){

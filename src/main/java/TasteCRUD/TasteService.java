@@ -8,10 +8,12 @@ package TasteCRUD;
 import Model.Beers;
 import Model.Breweries;
 import Model.BreweriesGeocode;
+import Model.Categories;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import Model.DBUtil;
+import Model.Styles;
 import javax.persistence.EntityTransaction;
 import javax.persistence.NamedQuery;
 import org.springframework.stereotype.Service;
@@ -44,17 +46,123 @@ public class TasteService {
         }
         //System.out.println("Got the list"+list);
         return list;    
-        
-       
-           
-       
-       
        }
+     public Beers getbeerByID(int beerid) {
+        EntityManager em = DBUtil.getEMF().createEntityManager();
+
+        Beers beer = null;
+        try {
+            beer = em.find(Beers.class, beerid);
+            //System.out.println("PRinting result"+ property);
+            if (beer == null)
+                return null;
+        } catch (Exception ex) {
+            System.out.println(ex);
+        } finally {
+            em.close();
+        }
+
+        return beer;
+    }
+    public Styles getStyleByID(int styleid) {
+        EntityManager em = DBUtil.getEMF().createEntityManager();
+
+        Styles style = null;
+        try {
+            style = em.find(Styles.class, styleid);
+            //System.out.println("PRinting result"+ property);
+            if (style == null)
+                return null;
+        } catch (Exception ex) {
+            System.out.println(ex);
+        } finally {
+            em.close();
+        }
+
+        return style;
+    }
+     public Categories getCatByID(int catid) {
+        EntityManager em = DBUtil.getEMF().createEntityManager();
+
+        Categories cat = null;
+        try {
+            cat = em.find(Categories.class, catid);
+            //System.out.println("PRinting result"+ property);
+            if (cat == null)
+                return null;
+        } catch (Exception ex) {
+            System.out.println(ex);
+        } finally {
+            em.close();
+        }
+
+        return cat;
+    }
     
-    
-    
-    
-    
+//    public Boolean editBeer(Beers beer, double newprice) {
+//            beer.setSellPrice(newprice);
+//            System.out.println("Beer to be updated:  "+ beer);
+//        System.out.println("Sell price= "+beer.getSellPrice());
+//        EntityManager em =DBUtil.getEMF().createEntityManager();
+//          EntityTransaction trans=em.getTransaction();
+//          //Boolean success=true;
+//          try{
+//              trans.begin();
+//              em.merge(beer);
+//              trans.commit();
+//          }
+//      catch(Exception ex){
+//          System.out.println("ex"+ ex + "Transaction"+trans.toString());
+//          //success=false;
+//          //return success;
+//          
+//      }
+//          finally{
+//              em.close();
+//          }
+//         // success=true;
+//          return true;
+//    }
+    public Boolean editBeer(Beers beer, double newprice) {
+            int id= beer.getId();
+            double price=beer.getSellPrice();
+            //System.out.println("price"+price);
+            EntityManager em = DBUtil.getEMF().createEntityManager();
+            
+            EntityTransaction trans=em.getTransaction();
+           
+            //tq.setParameter("price",newprice);
+            em.getTransaction().begin();
+
+            String jpqlUpdate = "UPDATE Beers SET sellPrice = :price WHERE id = :id ";
+            int updatedEntities = em.createQuery( jpqlUpdate )
+                            .setParameter( "price", newprice )
+                            .setParameter( "id", id )
+                            .executeUpdate();
+                            em.getTransaction().commit();
+            em.close();
+            
+            System.out.println("updatedEntities"+updatedEntities);
+            
+            
+            
+           // Beers beers=tq.getSingleResult();
+            //beers.setSellPrice(newprice);
+//            try{        
+//                trans.begin();
+//                em.merge(beer);
+//                trans.commit();
+//    
+//    }
+//            catch(Exception ex){
+//                System.out.println("ex"+ ex);
+//            }
+//           
+//            finally{
+//              em.close();
+//          }
+          return true;
+    }
     
     
        public List<Breweries> getAllBreweries() {
